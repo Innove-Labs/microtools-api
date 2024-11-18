@@ -15,11 +15,11 @@ func main() {
 	// Load environment variables from .env file
 	err := godotenv.Load()
 	if err != nil {
-		log.Fatalf("Error loading .env file")
+		log.Fatalf("Error loading .env file -->")
 	}
 
-	MongoClient = initMongoDB()
-	initRedis()
+	// MongoClient = initMongoDB()
+	// initRedis()
 	//go updateApiHitCounts()
 
 	log.Println("Database initialized")
@@ -28,10 +28,12 @@ func main() {
 	// will implement the count increment worker later
 	//router.Use(APICounterMiddleware)
 
-	router.HandleFunc("/api/v1/user/register", RegisterUserHandler).Methods("POST")
+	// router.HandleFunc("/api/v1/user/register", RegisterUserHandler).Methods("POST")
 
 	// auth required apis
-	router.Handle("/api/v1/email/validate", JWTAuthMiddleware(http.HandlerFunc(ValidateEmailHandler))).Methods("POST")
+	// router.Handle("/api/v1/email/validate", JWTAuthMiddleware(http.HandlerFunc(ValidateEmailHandler))).Methods("POST")
+	router.Handle("/api/v1/email/validate", http.HandlerFunc(ValidateEmailHandler)).Methods("POST")
+
 
 	// Start server
 	log.Println("Server started on :8000")
