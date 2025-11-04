@@ -32,7 +32,7 @@ func main() {
 
 	// auth required apis
 	// router.Handle("/api/v1/email/validate", JWTAuthMiddleware(http.HandlerFunc(ValidateEmailHandler))).Methods("POST")
-	router.Handle("/api/v1/email/validate", http.HandlerFunc(ValidateEmailHandler)).Methods("POST")
+	router.Handle("/api/v1/validate/email", http.HandlerFunc(ValidateEmailHandler)).Methods("POST")
 
 
 	// Start server
