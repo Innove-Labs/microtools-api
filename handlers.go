@@ -33,6 +33,11 @@ func ValidateEmailHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(map[string]interface{}{"validationResult": emailValidationResult})
 }
 
+func LiveHandler(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusCreated)
+	json.NewEncoder(w).Encode(map[string]string{"message": "Live"})
+}
+
 func RegisterUserHandler(w http.ResponseWriter, r *http.Request) {
 	var user UserRequest
 

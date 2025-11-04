@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"net/http"
+	"fmt"
 
 	"github.com/gorilla/mux"
 	"github.com/joho/godotenv" // For loading .env configuration
@@ -33,6 +34,16 @@ func main() {
 	// auth required apis
 	// router.Handle("/api/v1/email/validate", JWTAuthMiddleware(http.HandlerFunc(ValidateEmailHandler))).Methods("POST")
 	router.Handle("/api/v1/validate/email", http.HandlerFunc(ValidateEmailHandler)).Methods("POST")
+
+	// public apis
+	router.Handle("/api/v1/live", http.HandlerFunc(LiveHandler)).Methods("GET")
+
+	// view
+	// get index html from /view folder
+	router.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+    	fmt.Println("Serving index.html")
+    	http.ServeFile(w, r, "views/index.html")
+	}).Methods("GET")
 
 
 	// Start server
