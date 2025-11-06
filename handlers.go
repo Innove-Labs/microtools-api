@@ -4,12 +4,17 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"strings"
 
 	"go.mongodb.org/mongo-driver/bson"
 )
 
 type EmailRequest struct {
 	Email string `json:"email"`
+}
+
+type IPRequest struct {
+	IP string `json:"ip"`
 }
 
 type UserRequest struct {
@@ -28,9 +33,41 @@ func ValidateEmailHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	log.Println("Validating email: ", email.Email)
-	emailValidationResult := ValidateEmail(email.Email)
+	formattedEmail := strings.TrimSpace(email.Email)
+	emailValidationResult := ValidateEmail(formattedEmail)
 	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(map[string]interface{}{"validationResult": emailValidationResult})
+}
+
+func ValidateIPHandler(w http.ResponseWriter, r *http.Request) {
+	var ip IPRequest
+
+	err := json.NewDecoder(r.Body).Decode(&ip)
+	if err != nil {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusBadRequest)
+
+		json.NewEncoder(w).Encode(map[string]interface{}{
+			"error":   true,
+			"message": err.Error(),
+		})		
+		return
+	}
+	log.Println("Validating IP: ", ip.IP)
+	formattedIP := strings.TrimSpace(ip.IP)
+	ipValidationResult, err := ValidateIP(formattedIP)
+	if err != nil {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusBadRequest)
+
+		json.NewEncoder(w).Encode(map[string]interface{}{
+			"error":   true,
+			"message": err.Error(),
+		})		
+		return
+	}
+	w.WriteHeader(http.StatusCreated)
+	json.NewEncoder(w).Encode(map[string]interface{}{"validationResult": ipValidationResult})
 }
 
 func LiveHandler(w http.ResponseWriter, r *http.Request) {

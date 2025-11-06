@@ -1,429 +1,648 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Micro API - Developer Documentation</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 40px 20px;
-        }
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        padding: 40px 20px;
+      }
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
 
-        .header {
-            text-align: center;
-            color: white;
-            margin-bottom: 50px;
-        }
+      .header {
+        text-align: center;
+        color: white;
+        margin-bottom: 50px;
+      }
 
-        .header h1 {
-            font-size: 3.5em;
-            margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-        }
+      .header h1 {
+        font-size: 3.5em;
+        margin-bottom: 10px;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+      }
 
-        .header .tagline {
-            font-size: 1.3em;
-            opacity: 0.9;
-        }
+      .header .tagline {
+        font-size: 1.3em;
+        opacity: 0.9;
+      }
 
-        .base-url {
-            background: rgba(255,255,255,0.15);
-            backdrop-filter: blur(10px);
-            padding: 20px;
-            border-radius: 12px;
-            margin-bottom: 40px;
-            border: 1px solid rgba(255,255,255,0.2);
-        }
+      .base-url {
+        background: rgba(255, 255, 255, 0.15);
+        backdrop-filter: blur(10px);
+        padding: 20px;
+        border-radius: 12px;
+        margin-bottom: 40px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+      }
 
-        .base-url h3 {
-            color: white;
-            margin-bottom: 10px;
-            font-size: 1.1em;
-        }
+      .base-url h3 {
+        color: white;
+        margin-bottom: 10px;
+        font-size: 1.1em;
+      }
 
-        .base-url code {
-            background: rgba(0,0,0,0.3);
-            color: #fff;
-            padding: 12px 20px;
-            border-radius: 8px;
-            display: inline-block;
-            font-size: 1.1em;
-            font-family: 'Courier New', monospace;
-        }
+      .base-url code {
+        background: rgba(0, 0, 0, 0.3);
+        color: #fff;
+        padding: 12px 20px;
+        border-radius: 8px;
+        display: inline-block;
+        font-size: 1.1em;
+        font-family: "Courier New", monospace;
+      }
 
-        .api-card {
-            background: white;
-            border-radius: 16px;
-            margin-bottom: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            overflow: hidden;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
+      .api-card {
+        background: white;
+        border-radius: 16px;
+        margin-bottom: 20px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        overflow: hidden;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+      }
 
-        .api-card:hover {
-            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
-        }
+      .api-card:hover {
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+      }
 
-        .api-card-header {
-            padding: 25px 30px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-            border-bottom: 2px solid #e2e8f0;
-            transition: background 0.3s ease;
-        }
+      .api-card-header {
+        padding: 25px 30px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+        border-bottom: 2px solid #e2e8f0;
+        transition: background 0.3s ease;
+      }
 
-        .api-card-header:hover {
-            background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
-        }
+      .api-card-header:hover {
+        background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+      }
 
-        .api-title-section {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            flex-wrap: wrap;
-            flex: 1;
-        }
+      .api-title-section {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        flex-wrap: wrap;
+        flex: 1;
+      }
 
-        .api-title {
-            font-size: 1.5em;
-            font-weight: 700;
-            color: #1e293b;
-        }
+      .api-title {
+        font-size: 1.5em;
+        font-weight: 700;
+        color: #1e293b;
+      }
 
-        .method-badge {
-            background: #10b981;
-            color: white;
-            padding: 6px 14px;
-            border-radius: 6px;
-            font-weight: bold;
-            font-size: 0.75em;
-        }
+      .method-badge {
+        background: #10b981;
+        color: white;
+        padding: 6px 14px;
+        border-radius: 6px;
+        font-weight: bold;
+        font-size: 0.75em;
+      }
 
-        .endpoint {
-            font-family: 'Courier New', monospace;
-            font-size: 0.95em;
-            color: #64748b;
-            font-weight: 500;
-        }
+      .endpoint {
+        font-family: "Courier New", monospace;
+        font-size: 0.95em;
+        color: #64748b;
+        font-weight: 500;
+      }
 
-        .toggle-icon {
-            font-size: 1.5em;
-            color: #64748b;
-            transition: transform 0.3s ease;
-            user-select: none;
-        }
+      .toggle-icon {
+        font-size: 1.5em;
+        color: #64748b;
+        transition: transform 0.3s ease;
+        user-select: none;
+      }
 
-        .toggle-icon.open {
-            transform: rotate(180deg);
-        }
+      .toggle-icon.open {
+        transform: rotate(180deg);
+      }
 
-        .api-content {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.4s ease;
-        }
+      .api-content {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.4s ease;
+      }
 
-        .api-content.open {
-            max-height: 3000px;
-        }
+      .api-content.open {
+        max-height: 3000px;
+      }
 
-        .api-content-inner {
-            padding: 30px;
-        }
+      .api-content-inner {
+        padding: 30px;
+      }
 
-        .description {
-            color: #6b7280;
-            margin-bottom: 25px;
-            line-height: 1.6;
-            font-size: 1.05em;
-        }
+      .description {
+        color: #6b7280;
+        margin-bottom: 25px;
+        line-height: 1.6;
+        font-size: 1.05em;
+      }
 
-        .section {
-            margin-bottom: 25px;
-        }
+      .section {
+        margin-bottom: 25px;
+      }
 
-        .section h4 {
-            color: #1f2937;
-            margin-bottom: 12px;
-            font-size: 1.1em;
-            border-bottom: 2px solid #e5e7eb;
-            padding-bottom: 8px;
-        }
+      .section h4 {
+        color: #1f2937;
+        margin-bottom: 12px;
+        font-size: 1.1em;
+        border-bottom: 2px solid #e5e7eb;
+        padding-bottom: 8px;
+      }
 
-        .param-grid {
-            display: grid;
-            gap: 10px;
-        }
+      .param-grid {
+        display: grid;
+        gap: 10px;
+      }
 
-        .param-item {
-            background: #f9fafb;
-            padding: 12px 15px;
-            border-radius: 8px;
-            border-left: 3px solid #667eea;
-        }
+      .param-item {
+        background: #f9fafb;
+        padding: 12px 15px;
+        border-radius: 8px;
+        border-left: 3px solid #667eea;
+      }
 
-        .param-name {
-            font-weight: 600;
-            color: #374151;
-            font-family: 'Courier New', monospace;
-        }
+      .param-name {
+        font-weight: 600;
+        color: #374151;
+        font-family: "Courier New", monospace;
+      }
 
-        .param-type {
-            color: #059669;
-            font-size: 0.9em;
-            margin-left: 8px;
-        }
+      .param-type {
+        color: #059669;
+        font-size: 0.9em;
+        margin-left: 8px;
+      }
 
-        .param-desc {
-            color: #6b7280;
-            margin-top: 5px;
-            font-size: 0.95em;
-        }
+      .param-desc {
+        color: #6b7280;
+        margin-top: 5px;
+        font-size: 0.95em;
+      }
 
-        .code-block {
-            background: #1f2937;
-            color: #e5e7eb;
-            padding: 20px;
-            border-radius: 8px;
-            overflow-x: auto;
-            font-family: 'Courier New', monospace;
-            font-size: 0.9em;
-            line-height: 1.5;
-        }
+      .code-block {
+        background: #1f2937;
+        color: #e5e7eb;
+        padding: 20px;
+        border-radius: 8px;
+        overflow-x: auto;
+        font-family: "Courier New", monospace;
+        font-size: 0.9em;
+        line-height: 1.5;
+      }
 
-        .json-key {
-            color: #93c5fd;
-        }
+      .json-key {
+        color: #93c5fd;
+      }
 
-        .json-string {
-            color: #86efac;
-        }
+      .json-string {
+        color: #86efac;
+      }
 
-        .json-boolean {
-            color: #fbbf24;
-        }
+      .json-boolean {
+        color: #fbbf24;
+      }
 
-        .try-it {
-            margin-top: 30px;
-            padding: 20px;
-            background: #f0f9ff;
-            border-radius: 8px;
-            border: 2px solid #0ea5e9;
-        }
+      .try-it {
+        margin-top: 30px;
+        padding: 20px;
+        background: #f0f9ff;
+        border-radius: 8px;
+        border: 2px solid #0ea5e9;
+      }
 
-        .try-it h4 {
-            color: #0c4a6e;
-            margin-bottom: 15px;
-        }
+      .try-it h4 {
+        color: #0c4a6e;
+        margin-bottom: 15px;
+      }
 
-        .input-group {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 15px;
-            flex-wrap: wrap;
-        }
+      .input-group {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 15px;
+        flex-wrap: wrap;
+      }
 
-        .input-group input {
-            flex: 1;
-            min-width: 250px;
-            padding: 12px;
-            border: 2px solid #cbd5e1;
-            border-radius: 8px;
-            font-size: 1em;
-        }
+      .input-group input {
+        flex: 1;
+        min-width: 250px;
+        padding: 12px;
+        border: 2px solid #cbd5e1;
+        border-radius: 8px;
+        font-size: 1em;
+      }
 
-        .input-group button {
-            padding: 12px 30px;
-            background: #667eea;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background 0.3s ease;
-        }
+      .input-group button {
+        padding: 12px 30px;
+        background: #667eea;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.3s ease;
+      }
 
-        .input-group button:hover {
-            background: #5568d3;
-        }
+      .input-group button:hover {
+        background: #5568d3;
+      }
 
-        .result {
-            margin-top: 15px;
-        }
+      .result {
+        margin-top: 15px;
+      }
 
-        .footer {
-            text-align: center;
-            color: white;
-            margin-top: 50px;
-            opacity: 0.8;
-        }
+      .footer {
+        text-align: center;
+        color: white;
+        margin-top: 50px;
+        opacity: 0.8;
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div class="container">
-        <div class="header">
-            <h1>🚀 Micro API</h1>
-            <p class="tagline">Simple, powerful APIs for developers and businesses</p>
+      <div class="header">
+        <h1>🚀 Micro API</h1>
+        <p class="tagline">
+          Simple, powerful APIs for developers and businesses
+        </p>
+      </div>
+
+      <div class="base-url">
+        <h3>Base URL</h3>
+        <code>https://microapi.innovelabs.net</code>
+      </div>
+
+      <!-- Email Validation API -->
+      <div class="api-card">
+        <div class="api-card-header" onclick="toggleCard(this)">
+          <div class="api-title-section">
+            <h2 class="api-title">Email Validation</h2>
+            <span class="method-badge">POST</span>
+            <span class="endpoint">/api/v1/validate/email</span>
+          </div>
+          <span class="toggle-icon">▼</span>
         </div>
 
-        <div class="base-url">
-            <h3>Base URL</h3>
-            <code>https://microapi.innovelabs.net</code>
-        </div>
-
-        <!-- Email Validation API -->
-        <div class="api-card">
-            <div class="api-card-header" onclick="toggleCard(this)">
-                <div class="api-title-section">
-                    <h2 class="api-title">Email Validation</h2>
-                    <span class="method-badge">POST</span>
-                    <span class="endpoint">/api/v1/validate/email</span>
-                </div>
-                <span class="toggle-icon">▼</span>
-            </div>
-
-            <div class="api-content">
-                <div class="api-content-inner">
-                    <p class="description">
-                        Validates email addresses with comprehensive checks including syntax validation, domain verification, MX record lookup, and disposable email detection.
-                    </p>
-
-                    <div class="section">
-                        <h4>Request Body</h4>
-                        <div class="param-grid">
-                            <div class="param-item">
-                                <span class="param-name">email</span>
-                                <span class="param-type">string</span>
-                                <span style="color: #ef4444; font-size: 0.9em; margin-left: 8px;">required</span>
-                                <p class="param-desc">The email address to validate</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="section">
-                        <h4>Response</h4>
-                        <div class="code-block">
-{
-  <span class="json-key">"email"</span>: <span class="json-string">"user@example.com"</span>,
-  <span class="json-key">"isSyntaxValid"</span>: <span class="json-boolean">true</span>,
-  <span class="json-key">"isDomainValid"</span>: <span class="json-boolean">true</span>,
-  <span class="json-key">"mxRecordsFound"</span>: <span class="json-boolean">true</span>,
-  <span class="json-key">"isDisposable"</span>: <span class="json-boolean">false</span>
-}
-                        </div>
-                    </div>
-
-                    <div class="section">
-                        <h4>Response Fields</h4>
-                        <div class="param-grid">
-                            <div class="param-item">
-                                <span class="param-name">email</span>
-                                <span class="param-type">string</span>
-                                <p class="param-desc">The email address that was validated</p>
-                            </div>
-                            <div class="param-item">
-                                <span class="param-name">isSyntaxValid</span>
-                                <span class="param-type">boolean</span>
-                                <p class="param-desc">Whether the email has valid syntax format</p>
-                            </div>
-                            <div class="param-item">
-                                <span class="param-name">isDomainValid</span>
-                                <span class="param-type">boolean</span>
-                                <p class="param-desc">Whether the domain has valid DNS records (A or MX records)</p>
-                            </div>
-                            <div class="param-item">
-                                <span class="param-name">mxRecordsFound</span>
-                                <span class="param-type">boolean</span>
-                                <p class="param-desc">Whether MX (Mail Exchange) records exist for the domain</p>
-                            </div>
-                            <div class="param-item">
-                                <span class="param-name">isDisposable</span>
-                                <span class="param-type">boolean</span>
-                                <p class="param-desc">Whether the email is from a known disposable/temporary email provider</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="try-it">
-                        <h4>Try it out</h4>
-                        <div class="input-group">
-                            <input type="email" id="emailInput" placeholder="Enter email address" value="test@example.com">
-                            <button onclick="validateEmail()">Validate</button>
-                        </div>
-                        <div class="result" id="result"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="footer">
-            <p>Micro API by InnoveLabs • More APIs coming soon</p>
-            <p style="margin-top: 10px;">
-                Questions or issues? Contact us at 
-                <a href="mailto:fawaz@innovelabs.net" style="color: white; text-decoration: underline;">fawaz@innovelabs.net</a>
+        <div class="api-content">
+          <div class="api-content-inner">
+            <p class="description">
+              Validates email addresses with comprehensive checks including
+              syntax validation, domain verification, MX record lookup, and
+              disposable email detection.
             </p>
+
+            <div class="section">
+              <h4>Request Body</h4>
+              <div class="param-grid">
+                <div class="param-item">
+                  <span class="param-name">email</span>
+                  <span class="param-type">string</span>
+                  <span
+                    style="color: #ef4444; font-size: 0.9em; margin-left: 8px"
+                    >required</span
+                  >
+                  <p class="param-desc">The email address to validate</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="section">
+              <h4>Response</h4>
+              <div class="code-block">
+                { "validationResult": {
+                <span class="json-key">"email"</span>:
+                <span class="json-string">"user@example.com"</span>,
+                <span class="json-key">"isSyntaxValid"</span>:
+                <span class="json-boolean">true</span>,
+                <span class="json-key">"isDomainValid"</span>:
+                <span class="json-boolean">true</span>,
+                <span class="json-key">"mxRecordsFound"</span>:
+                <span class="json-boolean">true</span>,
+                <span class="json-key">"isDisposable"</span>:
+                <span class="json-boolean">false</span>
+                } }
+              </div>
+            </div>
+
+            <div class="section">
+              <h4>Response Fields</h4>
+              <div class="param-grid">
+                <div class="param-item">
+                  <span class="param-name">email</span>
+                  <span class="param-type">string</span>
+                  <p class="param-desc">The email address that was validated</p>
+                </div>
+                <div class="param-item">
+                  <span class="param-name">isSyntaxValid</span>
+                  <span class="param-type">boolean</span>
+                  <p class="param-desc">
+                    Whether the email has valid syntax format
+                  </p>
+                </div>
+                <div class="param-item">
+                  <span class="param-name">isDomainValid</span>
+                  <span class="param-type">boolean</span>
+                  <p class="param-desc">
+                    Whether the domain has valid DNS records (A or MX records)
+                  </p>
+                </div>
+                <div class="param-item">
+                  <span class="param-name">mxRecordsFound</span>
+                  <span class="param-type">boolean</span>
+                  <p class="param-desc">
+                    Whether MX (Mail Exchange) records exist for the domain
+                  </p>
+                </div>
+                <div class="param-item">
+                  <span class="param-name">isDisposable</span>
+                  <span class="param-type">boolean</span>
+                  <p class="param-desc">
+                    Whether the email is from a known disposable/temporary email
+                    provider
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div class="try-it">
+              <h4>Try it out</h4>
+              <div class="input-group">
+                <input
+                  type="email"
+                  id="emailInput"
+                  placeholder="Enter email address"
+                  value="test@example.com"
+                />
+                <button onclick="validateEmail()">Validate</button>
+              </div>
+              <div class="result" id="result"></div>
+            </div>
+          </div>
         </div>
+      </div>
+
+      <!-- IP validation API -->
+
+      <div class="api-card">
+        <div class="api-card-header" onclick="toggleCard(this)">
+          <div class="api-title-section">
+            <h2 class="api-title">Geolocation Validation</h2>
+            <span class="method-badge">POST</span>
+            <span class="endpoint">/api/v1/validate/ip</span>
+          </div>
+          <span class="toggle-icon">▼</span>
+        </div>
+
+        <div class="api-content">
+          <div class="api-content-inner">
+            <p class="description">
+              Validates IP addresses from around the world and provides
+              information about the location.
+            </p>
+
+            <div class="section">
+              <h4>Request Body</h4>
+              <div class="param-grid">
+                <div class="param-item">
+                  <span class="param-name">ip</span>
+                  <span class="param-type">string</span>
+                  <span
+                    style="color: #ef4444; font-size: 0.9em; margin-left: 8px"
+                    >required</span
+                  >
+                  <p class="param-desc">The IP address to validate</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="section">
+              <h4>Response</h4>
+              <div class="code-block">
+                { "validationResult": {
+                <span class="json-key">"ip"</span>:
+                <span class="json-string">"192.168.1.10"</span>,
+                <span class="json-key">"country"</span>:
+                <span class="json-string">"United States"</span>,
+                <span class="json-key">"region"</span>:
+                <span class="json-string">"California"</span>,
+                <span class="json-key">"city"</span>:
+                <span class="json-string">"San Francisco"</span>,
+                <span class="json-key">"latitude"</span>:
+                <span class="json-number">37.7749</span>,
+                <span class="json-key">"longitude"</span>:
+                <span class="json-number">-122.4194</span>,
+                <span class="json-key">"timezone"</span>:
+                <span class="json-string">"America/Los_Angeles"</span>
+                } }
+              </div>
+            </div>
+
+            <div class="section">
+              <h4>Response Fields</h4>
+              <div class="param-grid">
+                <div class="param-item">
+                  <span class="param-name">ip</span>
+                  <span class="param-type">string</span>
+                  <p class="param-desc">The IP address being looked up.</p>
+                </div>
+
+                <div class="param-item">
+                  <span class="param-name">country</span>
+                  <span class="param-type">string</span>
+                  <p class="param-desc">
+                    The country in which the IP address is located.
+                  </p>
+                </div>
+
+                <div class="param-item">
+                  <span class="param-name">region</span>
+                  <span class="param-type">string</span>
+                  <p class="param-desc">
+                    The state, province, or region associated with the IP
+                    address.
+                  </p>
+                </div>
+
+                <div class="param-item">
+                  <span class="param-name">city</span>
+                  <span class="param-type">string</span>
+                  <p class="param-desc">
+                    The city corresponding to the IP address location.
+                  </p>
+                </div>
+
+                <div class="param-item">
+                  <span class="param-name">latitude</span>
+                  <span class="param-type">number</span>
+                  <p class="param-desc">
+                    The latitude coordinate of the IP location.
+                  </p>
+                </div>
+
+                <div class="param-item">
+                  <span class="param-name">longitude</span>
+                  <span class="param-type">number</span>
+                  <p class="param-desc">
+                    The longitude coordinate of the IP location.
+                  </p>
+                </div>
+
+                <div class="param-item">
+                  <span class="param-name">timezone</span>
+                  <span class="param-type">string</span>
+                  <p class="param-desc">
+                    The timezone associated with the IP address location.
+                  </p>
+                </div>
+                <p class="param-desc">
+                  Note: Latitude and longitude values are approximations and
+                  cannot be used to determine the precise location.
+                </p>
+              </div>
+            </div>
+
+            <div class="try-it">
+              <h4>Try it out</h4>
+              <div class="input-group">
+                <input
+                  type="string"
+                  id="ipInput"
+                  placeholder="Enter IP address"
+                  value="10.1.2.7"
+                />
+                <button onclick="validateIP()">Validate</button>
+              </div>
+              <div class="ip-result" id="ip-result"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer">
+        <p>
+          Micro API by
+          <a href="https://innovelabs.net" target="_blank">InnoveLabs</a> • More
+          APIs coming soon
+        </p>
+        <p style="margin-top: 10px">
+          Questions or issues? Contact us at
+          <a
+            href="mailto:fawaz@innovelabs.net"
+            style="color: white; text-decoration: underline"
+            >fawaz@innovelabs.net</a
+          >
+        </p>
+      </div>
     </div>
 
     <script>
-        function toggleCard(header) {
-            const content = header.nextElementSibling;
-            const icon = header.querySelector('.toggle-icon');
-            
-            content.classList.toggle('open');
-            icon.classList.toggle('open');
+      function toggleCard(header) {
+        const content = header.nextElementSibling;
+        const icon = header.querySelector(".toggle-icon");
+
+        content.classList.toggle("open");
+        icon.classList.toggle("open");
+      }
+
+      async function validateEmail() {
+        const email = document.getElementById("emailInput").value;
+        const resultDiv = document.getElementById("result");
+
+        if (!email) {
+          resultDiv.innerHTML =
+            '<div class="code-block" style="color: #fca5a5;">Please enter an email address</div>';
+          return;
         }
 
-        async function validateEmail() {
-            const email = document.getElementById('emailInput').value;
-            const resultDiv = document.getElementById('result');
-            
-            if (!email) {
-                resultDiv.innerHTML = '<div class="code-block" style="color: #fca5a5;">Please enter an email address</div>';
-                return;
-            }
+        resultDiv.innerHTML = '<div class="code-block">Loading...</div>';
 
-            resultDiv.innerHTML = '<div class="code-block">Loading...</div>';
+        try {
+          const response = await fetch("/api/v1/validate/email", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ email: email }),
+          });
 
-            try {
-                const response = await fetch('/api/v1/validate/email', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ email: email })
-                });
+          const data = await response.json();
 
-                const data = await response.json();
-                
-                resultDiv.innerHTML = `<div class="code-block">${JSON.stringify(data, null, 2)}</div>`;
-            } catch (err) {
-                resultDiv.innerHTML = `<div class="code-block" style="color: #fca5a5;">Error: ${err.message}</div>`;
-            }
+          resultDiv.innerHTML = `<div class="code-block">${JSON.stringify(
+            data,
+            null,
+            2
+          )}</div>`;
+        } catch (err) {
+          resultDiv.innerHTML = `<div class="code-block" style="color: #fca5a5;">Error: ${err.message}</div>`;
+        }
+      }
+
+      async function validateIP() {
+        const ip = document.getElementById("ipInput").value;
+        const resultDiv = document.getElementById("ip-result");
+
+        if (!ip) {
+          resultDiv.innerHTML =
+            '<div class="code-block" style="color: #fca5a5;">Please enter an IP address</div>';
+          return;
         }
 
-        document.getElementById('emailInput').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                validateEmail();
-            }
+        resultDiv.innerHTML = '<div class="code-block">Loading...</div>';
+
+        try {
+          const response = await fetch("/api/v1/validate/ip", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ ip: ip }),
+          });
+
+          const data = await response.json();
+
+          resultDiv.innerHTML = `<div class="code-block">${JSON.stringify(
+            data,
+            null,
+            2
+          )}</div>`;
+        } catch (err) {
+          resultDiv.innerHTML = `<div class="code-block" style="color: #fca5a5;">Error: ${err.message}</div>`;
+        }
+      }
+
+      document
+        .getElementById("emailInput")
+        .addEventListener("keypress", function (e) {
+          if (e.key === "Enter") {
+            validateEmail();
+          }
+        });
+
+      document
+        .getElementById("ipInput")
+        .addEventListener("keypress", function (e) {
+          if (e.key === "Enter") {
+            validateIP();
+          }
         });
     </script>
-</body>
+  </body>
 </html>
