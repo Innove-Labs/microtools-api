@@ -1,0 +1,138 @@
+{{define "qr"}}
+<div class="api-card">
+  <div class="api-card-header" onclick="toggleCard(this)">
+    <div class="api-title-section">
+      <h2 class="api-title">QR Code Generator</h2>
+      <span class="method-badge">POST</span>
+      <span class="endpoint">/api/v1/generate/qr</span>
+    </div>
+    <span class="toggle-icon">&#9660;</span>
+  </div>
+
+  <div class="api-content">
+    <div class="api-content-inner">
+      <p class="description">
+        Generates QR codes as PNG images. Supports multiple data types including
+        plain text, URLs, email, phone, SMS, WiFi credentials, vCard contacts,
+        geo coordinates, calendar events, and raw JSON.
+      </p>
+
+      <div class="section">
+        <h4>Request Body</h4>
+        <div class="param-grid">
+          <div class="param-item">
+            <span class="param-name">type</span>
+            <span class="param-type">string</span>
+            <p class="param-desc">
+              One of: <code>text</code>, <code>url</code>, <code>email</code>,
+              <code>tel</code>, <code>sms</code>, <code>wifi</code>,
+              <code>vcard</code>, <code>geo</code>, <code>event</code>,
+              <code>json</code>. Default: <code>text</code>
+            </p>
+          </div>
+          <div class="param-item">
+            <span class="param-name">data</span>
+            <span class="param-type">string</span>
+            <span style="color: #ef4444; font-size: 0.9em; margin-left: 8px">required</span>
+            <p class="param-desc">The content to encode. Max 2000 characters. Format depends on type.</p>
+          </div>
+          <div class="param-item">
+            <span class="param-name">options.size</span>
+            <span class="param-type">integer</span>
+            <p class="param-desc">Image size in pixels (128-1024). Default: 256</p>
+          </div>
+          <div class="param-item">
+            <span class="param-name">options.error_correction</span>
+            <span class="param-type">string</span>
+            <p class="param-desc">
+              One of: <code>low</code>, <code>medium</code>, <code>high</code>,
+              <code>highest</code>. Default: <code>medium</code>
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h4>Example Request</h4>
+        <div class="code-block">
+{
+  <span class="json-key">"type"</span>: <span class="json-string">"url"</span>,
+  <span class="json-key">"data"</span>: <span class="json-string">"https://innovelabs.net"</span>,
+  <span class="json-key">"options"</span>: {
+    <span class="json-key">"size"</span>: <span class="json-boolean">512</span>,
+    <span class="json-key">"error_correction"</span>: <span class="json-string">"high"</span>
+  }
+}
+        </div>
+      </div>
+
+      <div class="section">
+        <h4>Response</h4>
+        <p class="param-desc">
+          On success: returns <code>image/png</code> binary data.<br />
+          On error: returns JSON with <code>{"error": "message"}</code> and appropriate HTTP status code.
+        </p>
+      </div>
+
+      <div class="try-it">
+        <h4>Try it out</h4>
+        <div class="input-group">
+          <select id="qrType">
+            <option value="text">Text</option>
+            <option value="url">URL</option>
+            <option value="email">Email</option>
+            <option value="tel">Phone</option>
+          </select>
+        </div>
+        <div class="input-group">
+          <input type="text" id="qrInput" placeholder="Enter data (text, URL, email, etc.)" value="https://innovelabs.net" />
+          <button onclick="generateQR()">Generate</button>
+        </div>
+        <div class="result" id="qr-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  async function generateQR() {
+    const type = document.getElementById("qrType").value;
+    const data = document.getElementById("qrInput").value;
+    const resultDiv = document.getElementById("qr-result");
+
+    if (!data) {
+      resultDiv.innerHTML = '<div class="code-block" style="color: #fca5a5;">Please enter data to encode</div>';
+      return;
+    }
+
+    resultDiv.innerHTML = '<div class="code-block">Generating...</div>';
+
+    try {
+      const response = await fetch("/api/v1/generate/qr", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ type: type, data: data }),
+      });
+
+      if (!response.ok) {
+        const err = await response.json();
+        resultDiv.innerHTML = `<div class="code-block" style="color: #fca5a5;">Error: ${err.error}</div>`;
+        return;
+      }
+
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+      resultDiv.innerHTML = `<div style="text-align:center; padding:20px; background:#f9fafb; border-radius:8px;">
+        <img src="${url}" alt="QR Code" style="max-width:256px; border-radius:8px; box-shadow:0 4px 12px rgba(0,0,0,0.1);" />
+        <p style="margin-top:12px; color:#6b7280; font-size:0.9em;">Scan or right-click to save</p>
+      </div>`;
+    } catch (err) {
+      resultDiv.innerHTML = `<div class="code-block" style="color: #fca5a5;">Error: ${err.message}</div>`;
+    }
+  }
+
+  document.getElementById("qrInput").addEventListener("keypress", function (e) {
+    if (e.key === "Enter") generateQR();
+  });
+</script>
+{{end}}

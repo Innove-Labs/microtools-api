@@ -1,0 +1,139 @@
+{{define "ip"}}
+<div class="api-card">
+  <div class="api-card-header" onclick="toggleCard(this)">
+    <div class="api-title-section">
+      <h2 class="api-title">Geolocation Validation</h2>
+      <span class="method-badge">POST</span>
+      <span class="endpoint">/api/v1/validate/ip</span>
+    </div>
+    <span class="toggle-icon">&#9660;</span>
+  </div>
+
+  <div class="api-content">
+    <div class="api-content-inner">
+      <p class="description">
+        Validates IP addresses from around the world and provides
+        information about the location.
+      </p>
+
+      <div class="section">
+        <h4>Request Body</h4>
+        <div class="param-grid">
+          <div class="param-item">
+            <span class="param-name">ip</span>
+            <span class="param-type">string</span>
+            <span style="color: #ef4444; font-size: 0.9em; margin-left: 8px">required</span>
+            <p class="param-desc">The IP address to validate</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h4>Response</h4>
+        <div class="code-block">
+          { "validationResult": {
+          <span class="json-key">"ip"</span>:
+          <span class="json-string">"192.168.1.10"</span>,
+          <span class="json-key">"country"</span>:
+          <span class="json-string">"United States"</span>,
+          <span class="json-key">"region"</span>:
+          <span class="json-string">"California"</span>,
+          <span class="json-key">"city"</span>:
+          <span class="json-string">"San Francisco"</span>,
+          <span class="json-key">"latitude"</span>:
+          <span class="json-number">37.7749</span>,
+          <span class="json-key">"longitude"</span>:
+          <span class="json-number">-122.4194</span>,
+          <span class="json-key">"timezone"</span>:
+          <span class="json-string">"America/Los_Angeles"</span>
+          } }
+        </div>
+      </div>
+
+      <div class="section">
+        <h4>Response Fields</h4>
+        <div class="param-grid">
+          <div class="param-item">
+            <span class="param-name">ip</span>
+            <span class="param-type">string</span>
+            <p class="param-desc">The IP address being looked up.</p>
+          </div>
+          <div class="param-item">
+            <span class="param-name">country</span>
+            <span class="param-type">string</span>
+            <p class="param-desc">The country in which the IP address is located.</p>
+          </div>
+          <div class="param-item">
+            <span class="param-name">region</span>
+            <span class="param-type">string</span>
+            <p class="param-desc">The state, province, or region associated with the IP address.</p>
+          </div>
+          <div class="param-item">
+            <span class="param-name">city</span>
+            <span class="param-type">string</span>
+            <p class="param-desc">The city corresponding to the IP address location.</p>
+          </div>
+          <div class="param-item">
+            <span class="param-name">latitude</span>
+            <span class="param-type">number</span>
+            <p class="param-desc">The latitude coordinate of the IP location.</p>
+          </div>
+          <div class="param-item">
+            <span class="param-name">longitude</span>
+            <span class="param-type">number</span>
+            <p class="param-desc">The longitude coordinate of the IP location.</p>
+          </div>
+          <div class="param-item">
+            <span class="param-name">timezone</span>
+            <span class="param-type">string</span>
+            <p class="param-desc">The timezone associated with the IP address location.</p>
+          </div>
+          <p class="param-desc">
+            Note: Latitude and longitude values are approximations and
+            cannot be used to determine the precise location.
+          </p>
+        </div>
+      </div>
+
+      <div class="try-it">
+        <h4>Try it out</h4>
+        <div class="input-group">
+          <input type="text" id="ipInput" placeholder="Enter IP address" value="10.1.2.7" />
+          <button onclick="validateIP()">Validate</button>
+        </div>
+        <div class="result" id="ip-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  async function validateIP() {
+    const ip = document.getElementById("ipInput").value;
+    const resultDiv = document.getElementById("ip-result");
+
+    if (!ip) {
+      resultDiv.innerHTML = '<div class="code-block" style="color: #fca5a5;">Please enter an IP address</div>';
+      return;
+    }
+
+    resultDiv.innerHTML = '<div class="code-block">Loading...</div>';
+
+    try {
+      const response = await fetch("/api/v1/validate/ip", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ip: ip }),
+      });
+      const data = await response.json();
+      resultDiv.innerHTML = `<div class="code-block">${JSON.stringify(data, null, 2)}</div>`;
+    } catch (err) {
+      resultDiv.innerHTML = `<div class="code-block" style="color: #fca5a5;">Error: ${err.message}</div>`;
+    }
+  }
+
+  document.getElementById("ipInput").addEventListener("keypress", function (e) {
+    if (e.key === "Enter") validateIP();
+  });
+</script>
+{{end}}

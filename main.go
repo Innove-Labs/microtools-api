@@ -1,9 +1,9 @@
 package main
 
 import (
+	"html/template"
 	"log"
 	"net/http"
-	"fmt"
 
 	"github.com/gorilla/mux"
 	"github.com/joho/godotenv" // For loading .env configuration
@@ -26,26 +26,34 @@ func main() {
 	log.Println("Database initialized")
 	router := mux.NewRouter()
 
-	// will implement the count increment worker later
-	//router.Use(APICounterMiddleware)
+	router.Use(APICounterMiddleware)
 
 	// router.HandleFunc("/api/v1/user/register", RegisterUserHandler).Methods("POST")
 
-	// auth required apis
 	// router.Handle("/api/v1/email/validate", JWTAuthMiddleware(http.HandlerFunc(ValidateEmailHandler))).Methods("POST")
 	router.Handle("/api/v1/validate/email", http.HandlerFunc(ValidateEmailHandler)).Methods("POST")
 	router.Handle("/api/v1/validate/ip", http.HandlerFunc(ValidateIPHandler)).Methods("POST")
+	router.Handle("/api/v1/generate/qr", http.HandlerFunc(QRHandler)).Methods("POST")
 
 	// public apis
 	router.Handle("/api/v1/live", http.HandlerFunc(LiveHandler)).Methods("GET")
 
-	// view
-	// get index html from /view folder
-	router.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-    	fmt.Println("Serving index.html")
-    	http.ServeFile(w, r, "views/index.html")
-	}).Methods("GET")
+	tmpl, err := template.ParseGlob("views/layout.html")
+	if err != nil {
+		log.Fatalf("Error parsing layout template: %v", err)
+	}
+	tmpl, err = tmpl.ParseGlob("views/partials/*.html")
+	if err != nil {
+		log.Fatalf("Error parsing partial templates: %v", err)
+	}
 
+	router.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "text/html; charset=utf-8")
+		if err := tmpl.Execute(w, nil); err != nil {
+			log.Printf("Error rendering template: %v", err)
+			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		}
+	}).Methods("GET")
 
 	// Start server
 	log.Println("Server started on :8000")
