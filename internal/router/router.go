@@ -1,4 +1,4 @@
-package main
+package router
 
 import (
 	"html/template"
@@ -6,11 +6,10 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
-	"github.com/joho/godotenv" // For loading .env configuration
-	"go.mongodb.org/mongo-driver/mongo"
+	"github.com/innovelabs/microtools-go/internal/handlers"
+	"github.com/innovelabs/microtools-go/internal/middleware"
+	"github.com/innovelabs/microtools-go/internal/services/generator"
 )
-
-var MongoClient *mongo.Client
 
 type PageData struct {
 	Title       string
@@ -28,44 +27,34 @@ func renderPage(tmpl *template.Template, data PageData) http.HandlerFunc {
 	}
 }
 
-func main() {
-	// Load environment variables from .env file
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatalf("Error loading .env file -->")
-	}
-
-	// MongoClient = initMongoDB()
-	// initRedis()
-	//go updateApiHitCounts()
-
-	log.Println("Database initialized")
+// SetupRouter configures and returns the application router
+func SetupRouter() *mux.Router {
 	router := mux.NewRouter()
 
-	router.Use(APICounterMiddleware)
+	// Apply middleware
+	router.Use(middleware.APICounterMiddleware)
 
-	// router.HandleFunc("/api/v1/user/register", RegisterUserHandler).Methods("POST")
+	// API routes
+	router.Handle("/api/v1/validate/email", http.HandlerFunc(handlers.ValidateEmailHandler)).Methods("POST")
+	router.Handle("/api/v1/validate/ip", http.HandlerFunc(handlers.ValidateIPHandler)).Methods("POST")
+	router.Handle("/api/v1/validate/iban", http.HandlerFunc(handlers.ValidateIBANHandler)).Methods("POST")
+	router.Handle("/api/v1/generate/qr", http.HandlerFunc(handlers.QRHandler)).Methods("POST")
 
-	// router.Handle("/api/v1/email/validate", JWTAuthMiddleware(http.HandlerFunc(ValidateEmailHandler))).Methods("POST")
-	router.Handle("/api/v1/validate/email", http.HandlerFunc(ValidateEmailHandler)).Methods("POST")
-	router.Handle("/api/v1/validate/ip", http.HandlerFunc(ValidateIPHandler)).Methods("POST")
-	router.Handle("/api/v1/validate/iban", http.HandlerFunc(ValidateIBANHandler)).Methods("POST")
-	router.Handle("/api/v1/generate/qr", http.HandlerFunc(QRHandler)).Methods("POST")
+	barcodeSvc := generator.NewDefaultBarcodeService()
+	router.Handle("/api/v1/generate/barcode", handlers.GenerateBarcodeHandler(barcodeSvc)).Methods("POST")
 
-	barcodeSvc := NewDefaultBarcodeService()
-	router.Handle("/api/v1/generate/barcode", http.HandlerFunc(GenerateBarcodeHandler(barcodeSvc))).Methods("POST")
+	// Public APIs
+	router.Handle("/api/v1/live", http.HandlerFunc(handlers.LiveHandler)).Methods("GET")
 
-	// public apis
-	router.Handle("/api/v1/live", http.HandlerFunc(LiveHandler)).Methods("GET")
+	// Parse templates
+	homeTmpl := template.Must(template.ParseFiles("web/templates/base.html", "web/templates/pages/home.html"))
+	emailTmpl := template.Must(template.ParseFiles("web/templates/base.html", "web/templates/pages/email.html"))
+	ipTmpl := template.Must(template.ParseFiles("web/templates/base.html", "web/templates/pages/ip.html"))
+	ibanTmpl := template.Must(template.ParseFiles("web/templates/base.html", "web/templates/pages/iban.html"))
+	qrTmpl := template.Must(template.ParseFiles("web/templates/base.html", "web/templates/pages/qr.html"))
+	barcodeTmpl := template.Must(template.ParseFiles("web/templates/base.html", "web/templates/pages/barcode.html"))
 
-	// Page templates
-	homeTmpl := template.Must(template.ParseFiles("views/base.html", "views/pages/home.html"))
-	emailTmpl := template.Must(template.ParseFiles("views/base.html", "views/pages/email.html"))
-	ipTmpl := template.Must(template.ParseFiles("views/base.html", "views/pages/ip.html"))
-	ibanTmpl := template.Must(template.ParseFiles("views/base.html", "views/pages/iban.html"))
-	qrTmpl := template.Must(template.ParseFiles("views/base.html", "views/pages/qr.html"))
-	barcodeTmpl := template.Must(template.ParseFiles("views/base.html", "views/pages/barcode.html"))
-
+	// Web UI routes
 	router.HandleFunc("/", renderPage(homeTmpl, PageData{
 		Title:       "Micro API - Free Developer APIs for Email, IP, QR & Barcode",
 		Description: "Free REST APIs for email validation, IP geolocation, QR code generation, and barcode generation. Simple JSON interface, no API key required.",
@@ -102,7 +91,5 @@ func main() {
 		Canonical:   "/barcode-generator-api",
 	})).Methods("GET")
 
-	// Start server
-	log.Println("Server started on :8000")
-	log.Fatal(http.ListenAndServe(":8000", router))
+	return router
 }

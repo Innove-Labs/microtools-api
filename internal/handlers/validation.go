@@ -1,4 +1,4 @@
-package main
+package handlers
 
 import (
 	"encoding/json"
@@ -6,30 +6,13 @@ import (
 	"net/http"
 	"strings"
 
-	"go.mongodb.org/mongo-driver/bson"
+	"github.com/innovelabs/microtools-go/internal/models"
+	"github.com/innovelabs/microtools-go/internal/services/validation"
 )
 
-type EmailRequest struct {
-	Email string `json:"email"`
-}
-
-type IPRequest struct {
-	IP string `json:"ip"`
-}
-
-type IBANRequest struct {
-	IBAN string `json:"iban"`
-}
-
-type UserRequest struct {
-	Email   string `json:"email"`
-	Name    string `json:"name"`
-	Company string `json:"company"`
-	Country string `json:"country"`
-}
-
+// ValidateEmailHandler handles email validation requests
 func ValidateEmailHandler(w http.ResponseWriter, r *http.Request) {
-	var email EmailRequest
+	var email models.EmailRequest
 
 	err := json.NewDecoder(r.Body).Decode(&email)
 	if err != nil {
@@ -38,19 +21,19 @@ func ValidateEmailHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	log.Println("Validating email: ", email.Email)
 	formattedEmail := strings.TrimSpace(email.Email)
-	emailValidationResult := ValidateEmail(formattedEmail)
+	emailValidationResult := validation.ValidateEmail(formattedEmail)
 	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(map[string]interface{}{"validationResult": emailValidationResult})
 }
 
+// ValidateIPHandler handles IP validation/geolocation requests
 func ValidateIPHandler(w http.ResponseWriter, r *http.Request) {
-	var ip IPRequest
+	var ip models.IPRequest
 
 	err := json.NewDecoder(r.Body).Decode(&ip)
 	if err != nil {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusBadRequest)
-
 		json.NewEncoder(w).Encode(map[string]interface{}{
 			"error":   true,
 			"message": err.Error(),
@@ -59,11 +42,10 @@ func ValidateIPHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	log.Println("Validating IP: ", ip.IP)
 	formattedIP := strings.TrimSpace(ip.IP)
-	ipValidationResult, err := ValidateIP(formattedIP)
+	ipValidationResult, err := validation.ValidateIP(formattedIP)
 	if err != nil {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusBadRequest)
-
 		json.NewEncoder(w).Encode(map[string]interface{}{
 			"error":   true,
 			"message": err.Error(),
@@ -74,8 +56,9 @@ func ValidateIPHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(map[string]interface{}{"validationResult": ipValidationResult})
 }
 
+// ValidateIBANHandler handles IBAN validation requests
 func ValidateIBANHandler(w http.ResponseWriter, r *http.Request) {
-	var ibanReq IBANRequest
+	var ibanReq models.IBANRequest
 
 	err := json.NewDecoder(r.Body).Decode(&ibanReq)
 	if err != nil {
@@ -90,48 +73,11 @@ func ValidateIBANHandler(w http.ResponseWriter, r *http.Request) {
 
 	log.Println("Validating IBAN:", ibanReq.IBAN)
 	formattedIBAN := strings.TrimSpace(ibanReq.IBAN)
-	ibanValidationResult := ValidateIBAN(formattedIBAN)
+	ibanValidationResult := validation.ValidateIBAN(formattedIBAN)
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(map[string]interface{}{
 		"validationResult": ibanValidationResult,
 	})
-}
-
-func LiveHandler(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(map[string]string{"message": "Live"})
-}
-
-func RegisterUserHandler(w http.ResponseWriter, r *http.Request) {
-	var user UserRequest
-
-	err := json.NewDecoder(r.Body).Decode(&user)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-	if user.Email == "" {
-		http.Error(w, "Email is required", http.StatusBadRequest)
-		return
-	}
-	collection := MongoClient.Database("microapps").Collection("users")
-	existingUser, err := collection.FindOne(r.Context(), bson.M{"email": user.Email}).Raw()
-	if existingUser != nil {
-		http.Error(w, "User already exists", http.StatusBadRequest)
-		return
-	}
-	_, err = collection.InsertOne(r.Context(), user)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-	jwt, jwtErr := GenerateJWT(user.Email)
-	if jwtErr != nil {
-		http.Error(w, jwtErr.Error(), http.StatusInternalServerError)
-		return
-	}
-	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(map[string]string{"message": "User registered successfully", "token": jwt})
 }

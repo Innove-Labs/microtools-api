@@ -1,21 +1,20 @@
-package main
+package generator
 
 import (
 	"bytes"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"image"
 	"image/color"
 	"image/draw"
 	"image/png"
-	"net/http"
 	"strings"
 	"unicode/utf8"
 
 	"github.com/boombuler/barcode"
 	"github.com/boombuler/barcode/code128"
 	"github.com/boombuler/barcode/ean"
+	"github.com/innovelabs/microtools-go/internal/models"
 	"golang.org/x/image/font"
 	"golang.org/x/image/font/basicfont"
 	"golang.org/x/image/math/fixed"
@@ -37,36 +36,30 @@ const (
 	minBarcodeHeight     = 50
 
 	textPaddingHeight = 20
-	maxCode128Length   = 500
+	maxCode128Length  = 500
 )
 
 var (
-	ErrInvalidType     = errors.New("invalid barcode type: must be UPC-A, EAN-13, or Code128")
-	ErrInvalidFormat   = errors.New("invalid format: must be png or svg")
-	ErrInvalidData     = errors.New("invalid data for the specified barcode type")
+	ErrInvalidType      = errors.New("invalid barcode type: must be UPC-A, EAN-13, or Code128")
+	ErrInvalidFormat    = errors.New("invalid format: must be png or svg")
+	ErrInvalidData      = errors.New("invalid data for the specified barcode type")
 	ErrChecksumMismatch = errors.New("checksum digit does not match computed value")
 )
 
-type GenerateRequest struct {
-	Data        string `json:"data"`
-	Type        string `json:"type"`
-	Format      string `json:"format"`
-	IncludeText bool   `json:"includeText"`
-	Width       int    `json:"width"`
-	Height      int    `json:"height"`
-}
-
+// BarcodeService defines barcode generation interface
 type BarcodeService interface {
-	Generate(req GenerateRequest) ([]byte, string, error)
+	Generate(req models.GenerateRequest) ([]byte, string, error)
 }
 
-type DefaultBarcodeService struct{}
+type defaultBarcodeService struct{}
 
-func NewDefaultBarcodeService() *DefaultBarcodeService {
-	return &DefaultBarcodeService{}
+// NewDefaultBarcodeService creates a new barcode service
+func NewDefaultBarcodeService() BarcodeService {
+	return &defaultBarcodeService{}
 }
 
-func (s *DefaultBarcodeService) Generate(req GenerateRequest) ([]byte, string, error) {
+// Generate generates a barcode image
+func (s *defaultBarcodeService) Generate(req models.GenerateRequest) ([]byte, string, error) {
 	applyBarcodeDefaults(&req)
 
 	if err := validateBarcodeRequest(req); err != nil {
@@ -90,7 +83,7 @@ func (s *DefaultBarcodeService) Generate(req GenerateRequest) ([]byte, string, e
 	}
 }
 
-func applyBarcodeDefaults(req *GenerateRequest) {
+func applyBarcodeDefaults(req *models.GenerateRequest) {
 	if req.Width == 0 {
 		req.Width = defaultBarcodeWidth
 	}
@@ -99,7 +92,7 @@ func applyBarcodeDefaults(req *GenerateRequest) {
 	}
 }
 
-func validateBarcodeRequest(req GenerateRequest) error {
+func validateBarcodeRequest(req models.GenerateRequest) error {
 	switch req.Type {
 	case BarcodeTypeUPCA, BarcodeTypeEAN13, BarcodeTypeCode128:
 	default:
@@ -356,39 +349,3 @@ func barcodeSVGEscape(s string) string {
 	return s
 }
 
-func mapBarcodeErrorToStatus(err error) int {
-	switch {
-	case errors.Is(err, ErrInvalidType),
-		errors.Is(err, ErrInvalidFormat),
-		errors.Is(err, ErrInvalidData),
-		errors.Is(err, ErrChecksumMismatch):
-		return http.StatusBadRequest
-	default:
-		return http.StatusInternalServerError
-	}
-}
-
-func GenerateBarcodeHandler(svc BarcodeService) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		if r.Method != http.MethodPost {
-			writeJSONError(w, http.StatusMethodNotAllowed, "method not allowed")
-			return
-		}
-
-		var req GenerateRequest
-		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-			writeJSONError(w, http.StatusBadRequest, "invalid JSON body")
-			return
-		}
-
-		data, contentType, err := svc.Generate(req)
-		if err != nil {
-			writeJSONError(w, mapBarcodeErrorToStatus(err), err.Error())
-			return
-		}
-
-		w.Header().Set("Content-Type", contentType)
-		w.WriteHeader(http.StatusOK)
-		w.Write(data)
-	}
-}

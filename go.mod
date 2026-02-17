@@ -1,4 +1,4 @@
-module main
+module github.com/innovelabs/microtools-go
 
 go 1.24.0
 

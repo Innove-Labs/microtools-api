@@ -1,4 +1,4 @@
-package main
+package config
 
 import (
 	"log"
@@ -14,7 +14,7 @@ type Config struct {
 	JWTSecret string
 }
 
-// Load function loads the environment variables from .env file and returns a Config object.
+// LoadConfig loads the environment variables from .env file and returns a Config object.
 func LoadConfig() *Config {
 	// Load environment variables from the .env file
 	err := godotenv.Load()
