@@ -1,4 +1,13 @@
 {{define "content"}}
+<div class="hero-section">
+  <div class="hero-features">
+    <div class="feature-pill">⚡ Lightning Fast</div>
+    <div class="feature-pill">🔓 No Auth Required</div>
+    <div class="feature-pill">💰 Free Tier</div>
+    <div class="feature-pill">📚 Simple REST API</div>
+  </div>
+</div>
+
 <div class="base-url">
   <h3>Base URL</h3>
   <code>https://microapi.innovelabs.net</code>
@@ -12,8 +21,8 @@
       <span class="endpoint">/api/v1/validate/email</span>
     </div>
     <p class="card-desc">
-      Validate email addresses with syntax checks, domain verification,
-      MX record lookup, and disposable email detection.
+      Verify email addresses in real-time. Checks syntax, domain validity,
+      MX records, and flags disposable emails. Perfect for user registration and lead validation.
     </p>
     <span class="card-hint">View documentation &rarr;</span>
   </a>
@@ -25,8 +34,8 @@
       <span class="endpoint">/api/v1/validate/ip</span>
     </div>
     <p class="card-desc">
-      Look up any IP address to get country, region, city, coordinates,
-      and timezone information.
+      Get location data from any IP address. Returns country, region, city,
+      coordinates, and timezone. Ideal for analytics, content localization, and fraud detection.
     </p>
     <span class="card-hint">View documentation &rarr;</span>
   </a>
@@ -38,8 +47,8 @@
       <span class="endpoint">/api/v1/validate/iban</span>
     </div>
     <p class="card-desc">
-      Validate International Bank Account Numbers with comprehensive checks
-      including format, length, and mod-97 checksum verification for 60+ countries.
+      Validate international bank account numbers across 60+ countries.
+      Performs mod-97 checksum verification and format validation. Essential for payment processing.
     </p>
     <span class="card-hint">View documentation &rarr;</span>
   </a>
@@ -51,8 +60,8 @@
       <span class="endpoint">/api/v1/generate/qr</span>
     </div>
     <p class="card-desc">
-      Generate QR codes as PNG images. Supports text, URLs, email, phone,
-      WiFi, vCard, geo, events, and JSON.
+      Generate QR codes instantly as PNG images. Supports URLs, WiFi credentials,
+      vCards, events, and more. Customizable size and error correction.
     </p>
     <span class="card-hint">View documentation &rarr;</span>
   </a>
@@ -64,10 +73,15 @@
       <span class="endpoint">/api/v1/generate/barcode</span>
     </div>
     <p class="card-desc">
-      Generate 1D barcodes in PNG or SVG. Supports UPC-A, EAN-13, and
-      Code128 with optional human-readable text.
+      Create 1D barcodes in PNG or SVG format. Supports UPC-A, EAN-13, and Code128.
+      Configurable colors, dimensions, and text display.
     </p>
     <span class="card-hint">View documentation &rarr;</span>
   </a>
+</div>
+
+<div class="quick-start">
+  <h3>Ready to integrate?</h3>
+  <p>All endpoints accept JSON via POST requests. Click any API above to view full documentation and try it live.</p>
 </div>
 {{end}}

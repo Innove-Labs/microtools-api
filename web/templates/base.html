@@ -1,12 +1,15 @@
 {{define "base"}}
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{{.Title}}</title>
     <meta name="description" content="{{.Description}}" />
-    <link rel="canonical" href="https://microapi.innovelabs.net{{.Canonical}}" />
+    <link
+      rel="canonical"
+      href="https://microapi.innovelabs.net{{.Canonical}}"
+    />
     <style>
       * {
         margin: 0;
@@ -16,7 +19,7 @@
 
       body {
         font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: #1e232e;
         min-height: 100vh;
         padding: 40px 20px;
       }
@@ -81,7 +84,7 @@
 
       .card-grid {
         display: grid;
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: repeat(3, 1fr);
         gap: 24px;
         margin-bottom: 50px;
       }
@@ -98,7 +101,9 @@
         padding: 28px;
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
         cursor: pointer;
-        transition: transform 0.25s ease, box-shadow 0.25s ease;
+        transition:
+          transform 0.25s ease,
+          box-shadow 0.25s ease;
         display: flex;
         flex-direction: column;
         gap: 14px;
@@ -260,10 +265,18 @@
         line-height: 1.5;
       }
 
-      .json-key { color: #93c5fd; }
-      .json-string { color: #86efac; }
-      .json-boolean { color: #fbbf24; }
-      .json-number { color: #fbbf24; }
+      .json-key {
+        color: #93c5fd;
+      }
+      .json-string {
+        color: #86efac;
+      }
+      .json-boolean {
+        color: #fbbf24;
+      }
+      .json-number {
+        color: #fbbf24;
+      }
 
       .try-it {
         margin-top: 30px;
@@ -330,14 +343,91 @@
       .footer a {
         color: white;
       }
+
+      /* ---- Hero Section ---- */
+
+      .hero-section {
+        text-align: center;
+        color: white;
+        margin-bottom: 40px;
+        padding: 30px 20px;
+      }
+
+      .hero-headline {
+        font-size: 2.2em;
+        font-weight: 700;
+        margin-bottom: 15px;
+        color: white;
+      }
+
+      .hero-subheadline {
+        font-size: 1.15em;
+        opacity: 0.9;
+        max-width: 800px;
+        margin: 0 auto 25px;
+        line-height: 1.6;
+      }
+
+      .hero-features {
+        display: flex;
+        justify-content: center;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-top: 20px;
+      }
+
+      .feature-pill {
+        background: rgba(255, 255, 255, 0.15);
+        backdrop-filter: blur(10px);
+        padding: 8px 18px;
+        border-radius: 20px;
+        font-size: 0.9em;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+      }
+
+      @media (max-width: 768px) {
+        .hero-headline {
+          font-size: 1.8em;
+        }
+        .hero-subheadline {
+          font-size: 1em;
+        }
+      }
+
+      /* ---- Quick Start Section ---- */
+
+      .quick-start {
+        text-align: center;
+        color: white;
+        margin: 50px auto 30px;
+        padding: 25px;
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        border-radius: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        max-width: 700px;
+      }
+
+      .quick-start h3 {
+        font-size: 1.5em;
+        margin-bottom: 10px;
+      }
+
+      .quick-start p {
+        font-size: 1.05em;
+        opacity: 0.9;
+        line-height: 1.6;
+      }
     </style>
   </head>
   <body>
     <div class="container">
       <div class="header">
-        <h1><a href="/">Micro API</a></h1>
-        <p class="tagline">
-          Simple, powerful APIs for developers and businesses
+        <h2 href="/" class="hero-headline">Production-Ready Utility APIs</h2>
+        <p class="hero-subheadline">
+          Fast, reliable APIs for email validation, IP geolocation, IBAN
+          verification, and code generation. Free to use. No authentication
+          required.
         </p>
       </div>
 
@@ -346,12 +436,16 @@
       <div class="footer">
         <p>
           Micro API by
-          <a href="https://innovelabs.net" target="_blank">InnoveLabs</a> &bull; More
-          APIs coming soon
+          <a href="https://innovelabs.net" target="_blank">InnoveLabs</a> &bull;
+          More APIs coming soon
         </p>
         <p style="margin-top: 10px">
           Questions or issues? Contact us at
-          <a href="mailto:fawaz@innovelabs.net" style="text-decoration: underline">fawaz@innovelabs.net</a>
+          <a
+            href="mailto:fawaz@innovelabs.net"
+            style="text-decoration: underline"
+            >fawaz@innovelabs.net</a
+          >
         </p>
       </div>
     </div>
