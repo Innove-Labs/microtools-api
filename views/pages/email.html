@@ -1,0 +1,120 @@
+{{define "content"}}
+<a href="/" class="back-link">&larr; Back to all APIs</a>
+
+<div class="detail-card">
+  <div class="detail-header">
+    <h1>Email Validation API</h1>
+    <span class="method-badge">POST</span>
+    <span class="endpoint">/api/v1/validate/email</span>
+  </div>
+  <div class="detail-body">
+    <p class="description">
+      Validates email addresses with comprehensive checks including
+      syntax validation, domain verification, MX record lookup, and
+      disposable email detection. Returns a structured JSON result with
+      individual pass/fail flags for each check.
+    </p>
+
+    <div class="section">
+      <h4>Request Body</h4>
+      <div class="param-grid">
+        <div class="param-item">
+          <span class="param-name">email</span>
+          <span class="param-type">string</span>
+          <span class="param-required">required</span>
+          <p class="param-desc">The email address to validate</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h4>Example Request</h4>
+      <div class="code-block">
+{
+  <span class="json-key">"email"</span>: <span class="json-string">"user@example.com"</span>
+}
+      </div>
+    </div>
+
+    <div class="section">
+      <h4>Response</h4>
+      <div class="code-block">
+{
+  <span class="json-key">"validationResult"</span>: {
+    <span class="json-key">"email"</span>: <span class="json-string">"user@example.com"</span>,
+    <span class="json-key">"isSyntaxValid"</span>: <span class="json-boolean">true</span>,
+    <span class="json-key">"isDomainValid"</span>: <span class="json-boolean">true</span>,
+    <span class="json-key">"mxRecordsFound"</span>: <span class="json-boolean">true</span>,
+    <span class="json-key">"isDisposable"</span>: <span class="json-boolean">false</span>
+  }
+}
+      </div>
+    </div>
+
+    <div class="section">
+      <h4>Response Fields</h4>
+      <div class="param-grid">
+        <div class="param-item">
+          <span class="param-name">isSyntaxValid</span>
+          <span class="param-type">boolean</span>
+          <p class="param-desc">Whether the email has valid syntax format</p>
+        </div>
+        <div class="param-item">
+          <span class="param-name">isDomainValid</span>
+          <span class="param-type">boolean</span>
+          <p class="param-desc">Whether the domain has valid DNS records (A or MX records)</p>
+        </div>
+        <div class="param-item">
+          <span class="param-name">mxRecordsFound</span>
+          <span class="param-type">boolean</span>
+          <p class="param-desc">Whether MX (Mail Exchange) records exist for the domain</p>
+        </div>
+        <div class="param-item">
+          <span class="param-name">isDisposable</span>
+          <span class="param-type">boolean</span>
+          <p class="param-desc">Whether the email is from a known disposable/temporary email provider</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="try-it">
+      <h4>Try it out</h4>
+      <div class="input-group">
+        <input type="email" id="emailInput" placeholder="Enter email address" value="test@example.com" />
+        <button onclick="validateEmail()">Validate</button>
+      </div>
+      <div class="result" id="email-result"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+  async function validateEmail() {
+    const email = document.getElementById("emailInput").value;
+    const resultDiv = document.getElementById("email-result");
+
+    if (!email) {
+      resultDiv.innerHTML = '<div class="code-block" style="color: #fca5a5;">Please enter an email address</div>';
+      return;
+    }
+
+    resultDiv.innerHTML = '<div class="code-block">Loading...</div>';
+
+    try {
+      const response = await fetch("/api/v1/validate/email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: email }),
+      });
+      const data = await response.json();
+      resultDiv.innerHTML = '<div class="code-block">' + JSON.stringify(data, null, 2) + '</div>';
+    } catch (err) {
+      resultDiv.innerHTML = '<div class="code-block" style="color: #fca5a5;">Error: ' + err.message + '</div>';
+    }
+  }
+
+  document.getElementById("emailInput").addEventListener("keypress", function (e) {
+    if (e.key === "Enter") validateEmail();
+  });
+</script>
+{{end}}

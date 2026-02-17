@@ -32,7 +32,8 @@ var counterNames = map[string]string{
 	"/api/v1/validate/email": "email-validate",
 	"/api/v1/validate/ip":    "ip-validate",
 	"/api/v1/generate/qr":    "qr-generate",
-	"/api/v1/live":           "live",
+	"/api/v1/generate/barcode": "barcode-generate",
+	"/api/v1/live":             "live",
 }
 
 const counterBaseURL = "https://api.counterapi.dev/v2/fawaz-sullias-team-2926"

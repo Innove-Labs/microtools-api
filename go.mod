@@ -1,8 +1,9 @@
 module main
 
-go 1.23.2
+go 1.24.0
 
 require (
+	github.com/boombuler/barcode v1.1.0
 	github.com/go-redis/redis/v8 v8.11.5
 	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/gorilla/mux v1.8.1
@@ -10,6 +11,7 @@ require (
 	github.com/oschwald/geoip2-golang v1.13.0
 	github.com/skip2/go-qrcode v0.0.0-20200617195104-da1b6568686e
 	go.mongodb.org/mongo-driver v1.17.1
+	golang.org/x/image v0.36.0
 )
 
 require (
@@ -24,7 +26,7 @@ require (
 	github.com/xdg-go/stringprep v1.0.4 // indirect
 	github.com/youmark/pkcs8 v0.0.0-20240726163527-a2c0da244d78 // indirect
 	golang.org/x/crypto v0.26.0 // indirect
-	golang.org/x/sync v0.8.0 // indirect
+	golang.org/x/sync v0.19.0 // indirect
 	golang.org/x/sys v0.23.0 // indirect
-	golang.org/x/text v0.17.0 // indirect
+	golang.org/x/text v0.34.0 // indirect
 )

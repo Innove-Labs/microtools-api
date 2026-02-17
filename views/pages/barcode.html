@@ -1,0 +1,197 @@
+{{define "content"}}
+<a href="/" class="back-link">&larr; Back to all APIs</a>
+
+<div class="detail-card">
+  <div class="detail-header">
+    <h1>Barcode Generator API</h1>
+    <span class="method-badge">POST</span>
+    <span class="endpoint">/api/v1/generate/barcode</span>
+  </div>
+  <div class="detail-body">
+    <p class="description">
+      Generate 1D barcodes as PNG or SVG images. Supports UPC-A, EAN-13, and
+      Code128 formats with configurable dimensions and optional human-readable
+      text below the barcode. Checksums are automatically generated or validated.
+    </p>
+
+    <div class="section">
+      <h4>Request Body</h4>
+      <div class="param-grid">
+        <div class="param-item">
+          <span class="param-name">data</span>
+          <span class="param-type">string</span>
+          <span class="param-required">required</span>
+          <p class="param-desc">The content to encode into the barcode</p>
+        </div>
+        <div class="param-item">
+          <span class="param-name">type</span>
+          <span class="param-type">string</span>
+          <span class="param-required">required</span>
+          <p class="param-desc">
+            One of: <code>UPC-A</code>, <code>EAN-13</code>, <code>Code128</code>
+          </p>
+        </div>
+        <div class="param-item">
+          <span class="param-name">format</span>
+          <span class="param-type">string</span>
+          <span class="param-required">required</span>
+          <p class="param-desc">
+            Output format: <code>png</code> or <code>svg</code>
+          </p>
+        </div>
+        <div class="param-item">
+          <span class="param-name">includeText</span>
+          <span class="param-type">boolean</span>
+          <p class="param-desc">Render human-readable value below the barcode. Default: <code>false</code></p>
+        </div>
+        <div class="param-item">
+          <span class="param-name">width</span>
+          <span class="param-type">integer</span>
+          <p class="param-desc">Image width in pixels (50&ndash;1024). Default: 300</p>
+        </div>
+        <div class="param-item">
+          <span class="param-name">height</span>
+          <span class="param-type">integer</span>
+          <p class="param-desc">Image height in pixels (50&ndash;1024). Default: 150</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h4>Type-Specific Validation</h4>
+      <div class="param-grid">
+        <div class="param-item">
+          <span class="param-name">UPC-A</span>
+          <p class="param-desc">Numeric only. 11 digits (checksum auto-generated) or 12 digits (checksum validated).</p>
+        </div>
+        <div class="param-item">
+          <span class="param-name">EAN-13</span>
+          <p class="param-desc">Numeric only. 12 digits (checksum auto-generated) or 13 digits (checksum validated).</p>
+        </div>
+        <div class="param-item">
+          <span class="param-name">Code128</span>
+          <p class="param-desc">Full ASCII support. No fixed length. Max 500 characters.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h4>Example Request</h4>
+      <div class="code-block">
+{
+  <span class="json-key">"data"</span>: <span class="json-string">"012345678905"</span>,
+  <span class="json-key">"type"</span>: <span class="json-string">"UPC-A"</span>,
+  <span class="json-key">"format"</span>: <span class="json-string">"png"</span>,
+  <span class="json-key">"includeText"</span>: <span class="json-boolean">true</span>,
+  <span class="json-key">"width"</span>: <span class="json-number">300</span>,
+  <span class="json-key">"height"</span>: <span class="json-number">150</span>
+}
+      </div>
+    </div>
+
+    <div class="section">
+      <h4>Response</h4>
+      <p class="param-desc">
+        On success: returns <code>image/png</code> or <code>image/svg+xml</code> binary data.<br />
+        On error: returns JSON with <code>{"error": "message"}</code> and appropriate HTTP status code.
+      </p>
+    </div>
+
+    <div class="try-it">
+      <h4>Try it out</h4>
+      <div class="input-group">
+        <select id="barcodeType" onchange="updateBarcodePlaceholder()">
+          <option value="UPC-A">UPC-A</option>
+          <option value="EAN-13">EAN-13</option>
+          <option value="Code128">Code128</option>
+        </select>
+        <select id="barcodeFormat">
+          <option value="png">PNG</option>
+          <option value="svg">SVG</option>
+        </select>
+      </div>
+      <div class="input-group">
+        <input type="text" id="barcodeInput" placeholder="Enter barcode data (e.g. 012345678905)" value="012345678905" />
+        <button onclick="generateBarcode()">Generate</button>
+      </div>
+      <div class="result" id="barcode-result"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function updateBarcodePlaceholder() {
+    var type = document.getElementById("barcodeType").value;
+    var input = document.getElementById("barcodeInput");
+    switch (type) {
+      case "UPC-A":
+        input.placeholder = "11 or 12 digits (e.g. 012345678905)";
+        input.value = "012345678905";
+        break;
+      case "EAN-13":
+        input.placeholder = "12 or 13 digits (e.g. 4006381333931)";
+        input.value = "4006381333931";
+        break;
+      case "Code128":
+        input.placeholder = "Any ASCII text (e.g. Hello World)";
+        input.value = "Hello World";
+        break;
+    }
+  }
+
+  async function generateBarcode() {
+    var type = document.getElementById("barcodeType").value;
+    var format = document.getElementById("barcodeFormat").value;
+    var data = document.getElementById("barcodeInput").value;
+    var resultDiv = document.getElementById("barcode-result");
+
+    if (!data) {
+      resultDiv.innerHTML = '<div class="code-block" style="color: #fca5a5;">Please enter barcode data</div>';
+      return;
+    }
+
+    resultDiv.innerHTML = '<div class="code-block">Generating...</div>';
+
+    try {
+      var response = await fetch("/api/v1/generate/barcode", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          data: data,
+          type: type,
+          format: format,
+          includeText: true,
+          width: 300,
+          height: 150,
+        }),
+      });
+
+      if (!response.ok) {
+        var err = await response.json();
+        resultDiv.innerHTML = '<div class="code-block" style="color: #fca5a5;">Error: ' + err.error + '</div>';
+        return;
+      }
+
+      var blob = await response.blob();
+      var url = URL.createObjectURL(blob);
+
+      if (format === "svg") {
+        var text = await (await fetch(url)).text();
+        resultDiv.innerHTML = '<div style="text-align:center; padding:20px; background:#f9fafb; border-radius:8px;">' +
+          '<div style="display:inline-block; border-radius:8px; box-shadow:0 4px 12px rgba(0,0,0,0.1); overflow:hidden;">' + text + '</div>' +
+          '<p style="margin-top:12px; color:#6b7280; font-size:0.9em;">Right-click to save</p></div>';
+      } else {
+        resultDiv.innerHTML = '<div style="text-align:center; padding:20px; background:#f9fafb; border-radius:8px;">' +
+          '<img src="' + url + '" alt="Barcode" style="max-width:300px; border-radius:8px; box-shadow:0 4px 12px rgba(0,0,0,0.1);" />' +
+          '<p style="margin-top:12px; color:#6b7280; font-size:0.9em;">Right-click to save</p></div>';
+      }
+    } catch (err) {
+      resultDiv.innerHTML = '<div class="code-block" style="color: #fca5a5;">Error: ' + err.message + '</div>';
+    }
+  }
+
+  document.getElementById("barcodeInput").addEventListener("keypress", function (e) {
+    if (e.key === "Enter") generateBarcode();
+  });
+</script>
+{{end}}

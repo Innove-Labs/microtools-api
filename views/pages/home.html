@@ -1,0 +1,60 @@
+{{define "content"}}
+<div class="base-url">
+  <h3>Base URL</h3>
+  <code>https://microapi.innovelabs.net</code>
+</div>
+
+<div class="card-grid">
+  <a href="/email-validation-api" class="api-card">
+    <h2 class="card-title">Email Validation API</h2>
+    <div class="card-badges">
+      <span class="method-badge">POST</span>
+      <span class="endpoint">/api/v1/validate/email</span>
+    </div>
+    <p class="card-desc">
+      Validate email addresses with syntax checks, domain verification,
+      MX record lookup, and disposable email detection.
+    </p>
+    <span class="card-hint">View documentation &rarr;</span>
+  </a>
+
+  <a href="/ip-geolocation-api" class="api-card">
+    <h2 class="card-title">IP Geolocation API</h2>
+    <div class="card-badges">
+      <span class="method-badge">POST</span>
+      <span class="endpoint">/api/v1/validate/ip</span>
+    </div>
+    <p class="card-desc">
+      Look up any IP address to get country, region, city, coordinates,
+      and timezone information.
+    </p>
+    <span class="card-hint">View documentation &rarr;</span>
+  </a>
+
+  <a href="/qr-code-generator-api" class="api-card">
+    <h2 class="card-title">QR Code Generator API</h2>
+    <div class="card-badges">
+      <span class="method-badge">POST</span>
+      <span class="endpoint">/api/v1/generate/qr</span>
+    </div>
+    <p class="card-desc">
+      Generate QR codes as PNG images. Supports text, URLs, email, phone,
+      WiFi, vCard, geo, events, and JSON.
+    </p>
+    <span class="card-hint">View documentation &rarr;</span>
+  </a>
+
+  <a href="/barcode-generator-api" class="api-card">
+    <h2 class="card-title">Barcode Generator API</h2>
+    <div class="card-badges">
+      <span class="method-badge">POST</span>
+      <span class="endpoint">/api/v1/generate/barcode</span>
+    </div>
+    <p class="card-desc">
+      Generate 1D barcodes in PNG or SVG. Supports UPC-A, EAN-13, and
+      Code128 with optional human-readable text.
+    </p>
+    <span class="card-hint">View documentation &rarr;</span>
+  </a>
+</div>
+{{end}}

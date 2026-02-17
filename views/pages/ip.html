@@ -1,0 +1,126 @@
+{{define "content"}}
+<a href="/" class="back-link">&larr; Back to all APIs</a>
+
+<div class="detail-card">
+  <div class="detail-header">
+    <h1>IP Geolocation API</h1>
+    <span class="method-badge">POST</span>
+    <span class="endpoint">/api/v1/validate/ip</span>
+  </div>
+  <div class="detail-body">
+    <p class="description">
+      Look up any IP address to get detailed geolocation data including
+      country, region, city, latitude/longitude coordinates, and timezone.
+      Powered by the MaxMind GeoIP2 database.
+    </p>
+
+    <div class="section">
+      <h4>Request Body</h4>
+      <div class="param-grid">
+        <div class="param-item">
+          <span class="param-name">ip</span>
+          <span class="param-type">string</span>
+          <span class="param-required">required</span>
+          <p class="param-desc">The IP address to look up (IPv4 or IPv6)</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h4>Example Request</h4>
+      <div class="code-block">
+{
+  <span class="json-key">"ip"</span>: <span class="json-string">"8.8.8.8"</span>
+}
+      </div>
+    </div>
+
+    <div class="section">
+      <h4>Response</h4>
+      <div class="code-block">
+{
+  <span class="json-key">"validationResult"</span>: {
+    <span class="json-key">"ip"</span>: <span class="json-string">"8.8.8.8"</span>,
+    <span class="json-key">"country"</span>: <span class="json-string">"United States"</span>,
+    <span class="json-key">"region"</span>: <span class="json-string">"California"</span>,
+    <span class="json-key">"city"</span>: <span class="json-string">"Mountain View"</span>,
+    <span class="json-key">"latitude"</span>: <span class="json-number">37.386</span>,
+    <span class="json-key">"longitude"</span>: <span class="json-number">-122.0838</span>,
+    <span class="json-key">"timezone"</span>: <span class="json-string">"America/Los_Angeles"</span>
+  }
+}
+      </div>
+    </div>
+
+    <div class="section">
+      <h4>Response Fields</h4>
+      <div class="param-grid">
+        <div class="param-item">
+          <span class="param-name">country</span>
+          <span class="param-type">string</span>
+          <p class="param-desc">The country in which the IP address is located</p>
+        </div>
+        <div class="param-item">
+          <span class="param-name">region</span>
+          <span class="param-type">string</span>
+          <p class="param-desc">The state, province, or region associated with the IP address</p>
+        </div>
+        <div class="param-item">
+          <span class="param-name">city</span>
+          <span class="param-type">string</span>
+          <p class="param-desc">The city corresponding to the IP address location</p>
+        </div>
+        <div class="param-item">
+          <span class="param-name">latitude / longitude</span>
+          <span class="param-type">number</span>
+          <p class="param-desc">Approximate coordinates of the IP location</p>
+        </div>
+        <div class="param-item">
+          <span class="param-name">timezone</span>
+          <span class="param-type">string</span>
+          <p class="param-desc">The IANA timezone identifier for the IP location</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="try-it">
+      <h4>Try it out</h4>
+      <div class="input-group">
+        <input type="text" id="ipInput" placeholder="Enter IP address" value="8.8.8.8" />
+        <button onclick="validateIP()">Look up</button>
+      </div>
+      <div class="result" id="ip-result"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+  async function validateIP() {
+    const ip = document.getElementById("ipInput").value;
+    const resultDiv = document.getElementById("ip-result");
+
+    if (!ip) {
+      resultDiv.innerHTML = '<div class="code-block" style="color: #fca5a5;">Please enter an IP address</div>';
+      return;
+    }
+
+    resultDiv.innerHTML = '<div class="code-block">Loading...</div>';
+
+    try {
+      const response = await fetch("/api/v1/validate/ip", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ip: ip }),
+      });
+      const data = await response.json();
+      resultDiv.innerHTML = '<div class="code-block">' + JSON.stringify(data, null, 2) + '</div>';
+    } catch (err) {
+      resultDiv.innerHTML = '<div class="code-block" style="color: #fca5a5;">Error: ' + err.message + '</div>';
+    }
+  }
+
+  document.getElementById("ipInput").addEventListener("keypress", function (e) {
+    if (e.key === "Enter") validateIP();
+  });
+</script>
+{{end}}
