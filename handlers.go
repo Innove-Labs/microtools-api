@@ -17,6 +17,10 @@ type IPRequest struct {
 	IP string `json:"ip"`
 }
 
+type IBANRequest struct {
+	IBAN string `json:"iban"`
+}
+
 type UserRequest struct {
 	Email   string `json:"email"`
 	Name    string `json:"name"`
@@ -50,7 +54,7 @@ func ValidateIPHandler(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(map[string]interface{}{
 			"error":   true,
 			"message": err.Error(),
-		})		
+		})
 		return
 	}
 	log.Println("Validating IP: ", ip.IP)
@@ -63,11 +67,36 @@ func ValidateIPHandler(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(map[string]interface{}{
 			"error":   true,
 			"message": err.Error(),
-		})		
+		})
 		return
 	}
 	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(map[string]interface{}{"validationResult": ipValidationResult})
+}
+
+func ValidateIBANHandler(w http.ResponseWriter, r *http.Request) {
+	var ibanReq IBANRequest
+
+	err := json.NewDecoder(r.Body).Decode(&ibanReq)
+	if err != nil {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(map[string]interface{}{
+			"error":   true,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	log.Println("Validating IBAN:", ibanReq.IBAN)
+	formattedIBAN := strings.TrimSpace(ibanReq.IBAN)
+	ibanValidationResult := ValidateIBAN(formattedIBAN)
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(map[string]interface{}{
+		"validationResult": ibanValidationResult,
+	})
 }
 
 func LiveHandler(w http.ResponseWriter, r *http.Request) {

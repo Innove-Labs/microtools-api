@@ -1,0 +1,203 @@
+{{define "content"}}
+<a href="/" class="back-link">&larr; Back to all APIs</a>
+
+<div class="detail-card">
+  <div class="detail-header">
+    <h1>IBAN Validation API</h1>
+    <span class="method-badge">POST</span>
+    <span class="endpoint">/api/v1/validate/iban</span>
+  </div>
+  <div class="detail-body">
+    <p class="description">
+      Validates International Bank Account Numbers (IBAN) with comprehensive checks including
+      format validation, country-specific length verification, mod-97 checksum validation per
+      ISO 13616 standard, and support for 60+ countries worldwide. Returns detailed
+      validation results with formatted IBAN and extracted bank/account information.
+    </p>
+
+    <div class="section">
+      <h4>Request Body</h4>
+      <div class="param-grid">
+        <div class="param-item">
+          <span class="param-name">iban</span>
+          <span class="param-type">string</span>
+          <span class="param-required">required</span>
+          <p class="param-desc">The IBAN to validate (with or without spaces)</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h4>Example Request</h4>
+      <div class="code-block">
+{
+  <span class="json-key">"iban"</span>: <span class="json-string">"DE89370400440532013000"</span>
+}
+      </div>
+    </div>
+
+    <div class="section">
+      <h4>Response</h4>
+      <div class="code-block">
+{
+  <span class="json-key">"validationResult"</span>: {
+    <span class="json-key">"iban"</span>: <span class="json-string">"DE89370400440532013000"</span>,
+    <span class="json-key">"isValid"</span>: <span class="json-boolean">true</span>,
+    <span class="json-key">"formattedIban"</span>: <span class="json-string">"DE89 3704 0044 0532 0130 00"</span>,
+    <span class="json-key">"countryCode"</span>: <span class="json-string">"DE"</span>,
+    <span class="json-key">"countryName"</span>: <span class="json-string">"Germany"</span>,
+    <span class="json-key">"checkDigits"</span>: <span class="json-string">"89"</span>,
+    <span class="json-key">"bban"</span>: <span class="json-string">"370400440532013000"</span>,
+    <span class="json-key">"bankCode"</span>: <span class="json-string">"37040044"</span>,
+    <span class="json-key">"accountNumber"</span>: <span class="json-string">"0532013000"</span>,
+    <span class="json-key">"isFormatValid"</span>: <span class="json-boolean">true</span>,
+    <span class="json-key">"isCountrySupported"</span>: <span class="json-boolean">true</span>,
+    <span class="json-key">"isLengthValid"</span>: <span class="json-boolean">true</span>,
+    <span class="json-key">"isChecksumValid"</span>: <span class="json-boolean">true</span>
+  }
+}
+      </div>
+    </div>
+
+    <div class="section">
+      <h4>Response Fields</h4>
+      <div class="param-grid">
+        <div class="param-item">
+          <span class="param-name">isValid</span>
+          <span class="param-type">boolean</span>
+          <p class="param-desc">Overall validation result (all checks passed)</p>
+        </div>
+        <div class="param-item">
+          <span class="param-name">formattedIban</span>
+          <span class="param-type">string</span>
+          <p class="param-desc">IBAN formatted with spaces for readability</p>
+        </div>
+        <div class="param-item">
+          <span class="param-name">countryCode</span>
+          <span class="param-type">string</span>
+          <p class="param-desc">2-letter ISO country code</p>
+        </div>
+        <div class="param-item">
+          <span class="param-name">countryName</span>
+          <span class="param-type">string</span>
+          <p class="param-desc">Full country name</p>
+        </div>
+        <div class="param-item">
+          <span class="param-name">checkDigits</span>
+          <span class="param-type">string</span>
+          <p class="param-desc">2-digit checksum calculated using mod-97</p>
+        </div>
+        <div class="param-item">
+          <span class="param-name">bban</span>
+          <span class="param-type">string</span>
+          <p class="param-desc">Basic Bank Account Number (IBAN without country code and check digits)</p>
+        </div>
+        <div class="param-item">
+          <span class="param-name">bankCode</span>
+          <span class="param-type">string</span>
+          <p class="param-desc">Bank identifier code extracted from IBAN</p>
+        </div>
+        <div class="param-item">
+          <span class="param-name">accountNumber</span>
+          <span class="param-type">string</span>
+          <p class="param-desc">Account number extracted from IBAN</p>
+        </div>
+        <div class="param-item">
+          <span class="param-name">isFormatValid</span>
+          <span class="param-type">boolean</span>
+          <p class="param-desc">Whether the IBAN matches the country-specific format pattern</p>
+        </div>
+        <div class="param-item">
+          <span class="param-name">isCountrySupported</span>
+          <span class="param-type">boolean</span>
+          <p class="param-desc">Whether the country code is in the supported countries list</p>
+        </div>
+        <div class="param-item">
+          <span class="param-name">isLengthValid</span>
+          <span class="param-type">boolean</span>
+          <p class="param-desc">Whether the IBAN length matches the country-specific requirement</p>
+        </div>
+        <div class="param-item">
+          <span class="param-name">isChecksumValid</span>
+          <span class="param-type">boolean</span>
+          <p class="param-desc">Whether the mod-97 checksum validation passed (ISO 13616)</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h4>Supported Countries</h4>
+      <p class="param-desc" style="margin-bottom: 10px;">
+        This API supports IBAN validation for 60+ countries including all EU/SEPA countries:
+      </p>
+      <div class="code-block" style="font-size: 0.85em; line-height: 1.8;">
+        <strong>Europe:</strong> Andorra, Austria, Belgium, Bulgaria, Croatia, Cyprus, Czech Republic,
+        Denmark, Estonia, Finland, France, Germany, Gibraltar, Greece, Hungary, Iceland, Ireland,
+        Italy, Latvia, Liechtenstein, Lithuania, Luxembourg, Malta, Monaco, Netherlands, Norway,
+        Poland, Portugal, Romania, San Marino, Slovakia, Slovenia, Spain, Sweden, Switzerland,
+        United Kingdom, Vatican City<br><br>
+
+        <strong>Middle East:</strong> Bahrain, Israel, Jordan, Kuwait, Lebanon, Palestine, Qatar,
+        Saudi Arabia, Turkey, United Arab Emirates<br><br>
+
+        <strong>Other Regions:</strong> Azerbaijan, Belarus, Brazil, Costa Rica, Dominican Republic,
+        Egypt, El Salvador, Georgia, Guatemala, Iraq, Kazakhstan, Kosovo, Mauritius, Moldova,
+        Pakistan, Tunisia, Ukraine
+      </div>
+    </div>
+
+    <div class="try-it">
+      <h4>Try it out</h4>
+      <div class="input-group">
+        <input type="text" id="ibanInput" placeholder="Enter IBAN (e.g., DE89370400440532013000)"
+               value="DE89370400440532013000" style="flex: 2;" />
+        <button onclick="validateIBAN()">Validate</button>
+      </div>
+      <p style="color: #64748b; font-size: 0.9em; margin-top: 10px;">
+        Try these examples:
+        <a href="#" onclick="setIBAN('GB29NWBK60161331926819'); return false;" style="color: #667eea; text-decoration: underline;">UK</a> |
+        <a href="#" onclick="setIBAN('FR1420041010050500013M02606'); return false;" style="color: #667eea; text-decoration: underline;">France</a> |
+        <a href="#" onclick="setIBAN('IT60X0542811101000000123456'); return false;" style="color: #667eea; text-decoration: underline;">Italy</a> |
+        <a href="#" onclick="setIBAN('ES9121000418450200051332'); return false;" style="color: #667eea; text-decoration: underline;">Spain</a> |
+        <a href="#" onclick="setIBAN('NL91ABNA0417164300'); return false;" style="color: #667eea; text-decoration: underline;">Netherlands</a>
+      </p>
+      <div class="result" id="iban-result"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function setIBAN(iban) {
+    document.getElementById("ibanInput").value = iban;
+    validateIBAN();
+  }
+
+  async function validateIBAN() {
+    const iban = document.getElementById("ibanInput").value;
+    const resultDiv = document.getElementById("iban-result");
+
+    if (!iban) {
+      resultDiv.innerHTML = '<div class="code-block" style="color: #fca5a5;">Please enter an IBAN</div>';
+      return;
+    }
+
+    resultDiv.innerHTML = '<div class="code-block">Loading...</div>';
+
+    try {
+      const response = await fetch("/api/v1/validate/iban", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ iban: iban }),
+      });
+      const data = await response.json();
+      resultDiv.innerHTML = '<div class="code-block">' + JSON.stringify(data, null, 2) + '</div>';
+    } catch (err) {
+      resultDiv.innerHTML = '<div class="code-block" style="color: #fca5a5;">Error: ' + err.message + '</div>';
+    }
+  }
+
+  document.getElementById("ibanInput").addEventListener("keypress", function (e) {
+    if (e.key === "Enter") validateIBAN();
+  });
+</script>
+{{end}}

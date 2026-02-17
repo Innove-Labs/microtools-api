@@ -49,6 +49,7 @@ func main() {
 	// router.Handle("/api/v1/email/validate", JWTAuthMiddleware(http.HandlerFunc(ValidateEmailHandler))).Methods("POST")
 	router.Handle("/api/v1/validate/email", http.HandlerFunc(ValidateEmailHandler)).Methods("POST")
 	router.Handle("/api/v1/validate/ip", http.HandlerFunc(ValidateIPHandler)).Methods("POST")
+	router.Handle("/api/v1/validate/iban", http.HandlerFunc(ValidateIBANHandler)).Methods("POST")
 	router.Handle("/api/v1/generate/qr", http.HandlerFunc(QRHandler)).Methods("POST")
 
 	barcodeSvc := NewDefaultBarcodeService()
@@ -61,6 +62,7 @@ func main() {
 	homeTmpl := template.Must(template.ParseFiles("views/base.html", "views/pages/home.html"))
 	emailTmpl := template.Must(template.ParseFiles("views/base.html", "views/pages/email.html"))
 	ipTmpl := template.Must(template.ParseFiles("views/base.html", "views/pages/ip.html"))
+	ibanTmpl := template.Must(template.ParseFiles("views/base.html", "views/pages/iban.html"))
 	qrTmpl := template.Must(template.ParseFiles("views/base.html", "views/pages/qr.html"))
 	barcodeTmpl := template.Must(template.ParseFiles("views/base.html", "views/pages/barcode.html"))
 
@@ -80,6 +82,12 @@ func main() {
 		Title:       "Free IP Geolocation API - Country, City & Timezone Lookup",
 		Description: "Look up any IP address to get country, region, city, coordinates, and timezone. Free REST API powered by MaxMind GeoIP2.",
 		Canonical:   "/ip-geolocation-api",
+	})).Methods("GET")
+
+	router.HandleFunc("/iban-validation-api", renderPage(ibanTmpl, PageData{
+		Title:       "Free IBAN Validation API - Format, Checksum & Country Verification",
+		Description: "Validate International Bank Account Numbers (IBAN) with comprehensive checks including format validation, mod-97 checksum verification, and country-specific rules for 60+ countries.",
+		Canonical:   "/iban-validation-api",
 	})).Methods("GET")
 
 	router.HandleFunc("/qr-code-generator-api", renderPage(qrTmpl, PageData{
