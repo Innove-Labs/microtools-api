@@ -9,9 +9,10 @@ import (
 
 // Config struct holds all the configuration variables.
 type Config struct {
-	MongoURI  string
-	RedisURI  string
-	JWTSecret string
+	MongoURI      string
+	RedisURI      string
+	JWTSecret     string
+	CounterApiKey string
 }
 
 // LoadConfig loads the environment variables from .env file and returns a Config object.
@@ -24,8 +25,9 @@ func LoadConfig() *Config {
 
 	// Retrieve the variables from the environment
 	return &Config{
-		MongoURI:  os.Getenv("MONGO_URI"),
-		RedisURI:  os.Getenv("REDIS_URI"),
-		JWTSecret: os.Getenv("JWT_SECRET"),
+		MongoURI:      os.Getenv("MONGO_URI"),
+		RedisURI:      os.Getenv("REDIS_URI"),
+		JWTSecret:     os.Getenv("JWT_SECRET"),
+		CounterApiKey: os.Getenv("COUNTER_API_KEY"),
 	}
 }

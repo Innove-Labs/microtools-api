@@ -3,8 +3,9 @@ package middleware
 import (
 	"log"
 	"net/http"
-	"os"
 	"time"
+
+	"github.com/innovelabs/microtools-go/internal/config"
 )
 
 var counterNames = map[string]string{
@@ -32,7 +33,7 @@ func APICounterMiddleware(next http.Handler) http.Handler {
 }
 
 func incrementCounter(counterName string) {
-	apiKey := os.Getenv("COUNTER_API_KEY")
+	apiKey := config.LoadConfig().CounterApiKey
 	url := counterBaseURL + "/" + counterName + "/up"
 
 	req, err := http.NewRequest("GET", url, nil)

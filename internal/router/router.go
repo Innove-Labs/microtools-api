@@ -39,7 +39,6 @@ func SetupRouter() *mux.Router {
 	router.Handle("/api/v1/validate/ip", http.HandlerFunc(handlers.ValidateIPHandler)).Methods("POST")
 	router.Handle("/api/v1/validate/iban", http.HandlerFunc(handlers.ValidateIBANHandler)).Methods("POST")
 	router.Handle("/api/v1/generate/qr", http.HandlerFunc(handlers.QRHandler)).Methods("POST")
-
 	barcodeSvc := generator.NewDefaultBarcodeService()
 	router.Handle("/api/v1/generate/barcode", handlers.GenerateBarcodeHandler(barcodeSvc)).Methods("POST")
 
@@ -54,7 +53,7 @@ func SetupRouter() *mux.Router {
 	qrTmpl := template.Must(template.ParseFiles("web/templates/base.html", "web/templates/pages/qr.html"))
 	barcodeTmpl := template.Must(template.ParseFiles("web/templates/base.html", "web/templates/pages/barcode.html"))
 
-	// Web UI routes
+	// UI routes
 	router.HandleFunc("/", renderPage(homeTmpl, PageData{
 		Title:       "Micro API - Free Developer APIs for Email, IP, QR & Barcode",
 		Description: "Free REST APIs for email validation, IP geolocation, QR code generation, and barcode generation. Simple JSON interface, no API key required.",
